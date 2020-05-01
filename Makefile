@@ -1,4 +1,4 @@
-startfile = "cmd/hn.go"
+startfile = "cmd/gofeeder.go"
 run:
 	go run $(startfile) 
 

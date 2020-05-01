@@ -17,17 +17,19 @@ type FeedViewer interface {
 type feedLoader func() chan feed.Feed
 
 // NewUi - description
-func NewFeedViewer(scraper feed.Scraper) FeedViewer {
-	viewer := &feedViewer{scraper: scraper}
+func NewFeedViewer(scrapers []feed.Scraper) FeedViewer {
+	viewer := &feedViewer{scrapers: scrapers, currentScraper: 0}
 	return viewer
 }
 
 type feedViewer struct {
-	scraper  feed.Scraper
-	feed     []feed.Feed
-	grid     *ui.Grid
-	feedList *widgets.List
-	infoText *widgets.Paragraph
+	scrapers       []feed.Scraper
+	feed           []feed.Feed
+	grid           *ui.Grid
+	sourceList     *widgets.List
+	feedList       *widgets.List
+	infoText       *widgets.Paragraph
+	currentScraper int
 }
 
 // Show - Show ui
@@ -38,21 +40,24 @@ func (f *feedViewer) Show() {
 	}
 	defer ui.Close()
 
-	f.initListView()
+	f.initSourceView()
+	f.initFeedView()
 	f.initGrid()
 	f.render()
-	f.loadFeed(f.scraper.GetInitialFeed)
+	f.loadFeed(f.scrapers[f.currentScraper].GetInitialFeed)
 	f.initEventsPolling()
 }
 
 func (f *feedViewer) shortcutsText() string {
-	return "[ Shortcuts   ](fg:white,bg:black) [ Enter ](fg:black)[ Open article ](fg:black,bg:green) " +
-		"[ q ](fg:black)[ Quit ](fg:black,bg:green) " +
-		"[ j ](fg:black)[ Down ](fg:black,bg:green) " +
-		"[ k ](fg:black)[ Up ](fg:black,bg:green) " +
+	return "[ Shortcuts   ](fg:white,bg:black) [ Enter ](fg:black)[ Open ](fg:black,bg:green) " +
+		"[ k ](fg:black)[ Feed Up ](fg:black,bg:green) " +
+		"[ j ](fg:black)[ Feed Down ](fg:black,bg:green) " +
+		"[ Up ](fg:black)[  Source Up ](fg:black,bg:green) " +
+		"[ Down ](fg:black)[ Source Down ](fg:black,bg:green) " +
 		"[ n ](fg:black)[ Next ](fg:black,bg:green) " +
 		"[ p ](fg:black)[ Prev ](fg:black,bg:green) " +
-		"[ r ](fg:black)[ Refresh ](fg:black,bg:green) "
+		"[ r ](fg:black)[ Refresh ](fg:black,bg:green) " +
+		"[ q ](fg:black)[ Quit ](fg:black,bg:green) "
 }
 
 func (f *feedViewer) loadFeed(loader feedLoader) {
@@ -64,7 +69,7 @@ func (f *feedViewer) loadFeed(loader feedLoader) {
 		f.feed = append(f.feed, item)
 		f.feedList.Rows = append(f.feedList.Rows, item.Title)
 	}
-	f.feedList.Title = f.scraper.GetFeedName()
+	f.feedList.Title = fmt.Sprintf("  %s [%d]  ", f.scrapers[f.currentScraper].GetFeedName(), f.scrapers[f.currentScraper].GetPageIndex())
 	f.infoText.Text = f.shortcutsText()
 	f.feedList.SelectedRow = 0
 	f.render()
@@ -75,12 +80,25 @@ func (f *feedViewer) render() {
 	ui.Render(f.grid)
 }
 
-func (f *feedViewer) initListView() {
+func (f *feedViewer) initFeedView() {
 	f.feedList = widgets.NewList()
 	f.feedList.TextStyle = ui.NewStyle(ui.ColorWhite)
 	f.feedList.BorderStyle.Fg = ui.ColorMagenta
 	f.feedList.SelectedRowStyle.Fg = ui.ColorBlack
 	f.feedList.SelectedRowStyle.Bg = ui.ColorWhite
+}
+
+func (f *feedViewer) initSourceView() {
+	f.sourceList = widgets.NewList()
+	f.sourceList.TextStyle = ui.NewStyle(ui.ColorWhite)
+	f.sourceList.BorderStyle.Fg = ui.ColorMagenta
+	f.sourceList.SelectedRowStyle.Fg = ui.ColorBlack
+	f.sourceList.SelectedRowStyle.Bg = ui.ColorWhite
+	f.sourceList.Title = "  Sources  "
+	f.sourceList.Rows = make([]string, 0)
+	for _, s := range f.scrapers {
+		f.sourceList.Rows = append(f.sourceList.Rows, s.GetFeedName())
+	}
 }
 
 func (f *feedViewer) initGrid() {
@@ -94,7 +112,7 @@ func (f *feedViewer) initGrid() {
 	f.infoText.TextStyle = ui.Style{Modifier: ui.ModifierBold, Bg: ui.ColorWhite}
 	f.infoText.Text = "initiating..."
 
-	f.grid.Set(ui.NewRow(0.9, ui.NewCol(1.0, f.feedList)), ui.NewRow(0.1, ui.NewCol(1.0, f.infoText)))
+	f.grid.Set(ui.NewRow(0.9, ui.NewCol(0.2, f.sourceList), ui.NewCol(0.8, f.feedList)), ui.NewRow(0.1, ui.NewCol(1.0, f.infoText)))
 }
 
 func (f *feedViewer) openArticle() {
@@ -104,37 +122,5 @@ func (f *feedViewer) openArticle() {
 		browser.Stdout = nil
 		_ = browser.OpenURL(f.feed[index].Link)
 		f.render()
-	}
-}
-
-func (f *feedViewer) initEventsPolling() {
-	uiEvents := ui.PollEvents()
-	for {
-		select {
-		case e := <-uiEvents:
-			{
-				switch e.ID {
-				case "q", "C-c":
-					return
-				case "j":
-					f.feedList.ScrollDown()
-				case "k":
-					f.feedList.ScrollUp()
-				case "n":
-					f.loadFeed(f.scraper.GetNextFeed)
-				case "p":
-					f.loadFeed(f.scraper.GetPrevFeed)
-				case "r":
-					f.loadFeed(f.scraper.GetInitialFeed)
-				case "<Resize>":
-					payload := e.Payload.(ui.Resize)
-					f.grid.SetRect(0, 0, payload.Width, payload.Height-1)
-				case "<Enter>":
-					f.openArticle()
-				}
-
-				f.render()
-			}
-		}
 	}
 }

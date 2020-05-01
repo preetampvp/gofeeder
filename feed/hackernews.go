@@ -22,7 +22,11 @@ type hnScraper struct {
 }
 
 func (s *hnScraper) GetFeedName() string {
-	return fmt.Sprintf("Hacker News Feed")
+	return fmt.Sprintf("Hacker News")
+}
+
+func (s *hnScraper) GetPageIndex() int {
+	return s.pageIndex
 }
 
 func (s *hnScraper) GetInitialFeed() chan Feed {
@@ -33,6 +37,10 @@ func (s *hnScraper) GetInitialFeed() chan Feed {
 }
 
 func (s *hnScraper) GetNextFeed() chan Feed {
+	if s.nextPath == "" {
+		return s.scrapeFeed(fmt.Sprintf("%s", s.prevPaths[len(s.prevPaths)-1]))
+	}
+
 	s.pageIndex += 1
 	if s.nextPath != "" && len(s.prevPaths) < s.pageIndex {
 		s.prevPaths = append(s.prevPaths, s.nextPath)

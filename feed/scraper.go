@@ -5,6 +5,7 @@ type Scraper interface {
 	GetNextFeed() chan Feed
 	GetPrevFeed() chan Feed
 	GetFeedName() string
+	GetPageIndex() int
 }
 
 // todo: add sitestr
