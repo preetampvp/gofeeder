@@ -3,7 +3,8 @@
 go feed - WIP 🐼
 
 #### Configure
-Copy `gofeeder_sample.json` as `.gofeeder.json` to your home directory 
+
+Copy `gofeeder_sample.json` as `.gofeeder.json` to your home directory
 
 ### TODO
 
@@ -13,6 +14,7 @@ Copy `gofeeder_sample.json` as `.gofeeder.json` to your home directory
 - 👍 - AWS Blog: https://aws.amazon.com/blogs/aws/
 - 👍 - Dave Chaney Go - https://dave.cheney.net/category/golang
 - 👍 - Kubernetes - https://kubernetes.io/blog/
+- 👍 - Go Blog - https://blog.golang.org/index
 
 #### Features
 
