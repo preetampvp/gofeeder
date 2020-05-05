@@ -1,0 +1,39 @@
+{
+  "feeds": [
+    {
+      "name": "Hacker News",
+      "urlBase": "https://news.ycombinator.com/",
+      "urlPath": "newest",
+      "linkSelector": ".storylink",
+      "nextPageSelector": ".morelink"
+    },
+    {
+      "name": "AWS Blog",
+      "urlBase": "https://aws.amazon.com/blogs/aws/",
+      "urlPath": "",
+      "linkSelector": ".blog-post-title>a",
+      "nextPageSelector": ".blog-pagination>a:nth-child(1)"
+    },
+    {
+      "name": "Dave Cheney Blog",
+      "urlBase": "https://dave.cheney.net/category/golang",
+      "urlPath": "",
+      "linkSelector": ".entry-title>a",
+      "nextPageSelector": ".nav-previous>a:nth-child(1)"
+    },
+    {
+      "name": "Kubernetes Blog",
+      "urlBase": "https://kubernetes.io/blog/",
+      "urlPath": "",
+      "linkSelector": ".list-group-item>a",
+      "nextPageSelector": ""
+    },
+    {
+      "name": "Go Blog",
+      "urlBase": "https://blog.golang.org/",
+      "urlPath": "index",
+      "linkSelector": ".blogtitle>a",
+      "nextPageSelector": ""
+    }
+  ]
+}
