@@ -4,7 +4,7 @@
       "name": "Hacker News",
       "urlBase": "https://news.ycombinator.com/",
       "urlPath": "newest",
-      "linkSelector": ".storylink",
+      "linkSelector": ".titleline>a",
       "nextPageSelector": ".morelink"
     },
     {
@@ -12,7 +12,7 @@
       "urlBase": "https://aws.amazon.com/blogs/aws/",
       "urlPath": "",
       "linkSelector": ".blog-post-title>a",
-      "nextPageSelector": ".blog-pagination>a:nth-child(1)"
+      "nextPageSelector": ".blog-pagination>div:first-child>a"
     },
     {
       "name": "Dave Cheney Blog",
@@ -25,13 +25,13 @@
       "name": "Kubernetes Blog",
       "urlBase": "https://kubernetes.io/blog/",
       "urlPath": "",
-      "linkSelector": ".list-group-item>a",
-      "nextPageSelector": ""
+      "linkSelector": ".media-body>h5>a",
+      "nextPageSelector": "a['aria-label=Next']"
     },
     {
       "name": "Go Blog",
-      "urlBase": "https://blog.golang.org/",
-      "urlPath": "index",
+      "urlBase": "https://go.dev/blog/",
+      "urlPath": "all",
       "linkSelector": ".blogtitle>a",
       "nextPageSelector": ""
     }

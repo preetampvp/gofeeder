@@ -52,8 +52,9 @@ func (f *feedViewer) shortcutsText() string {
 	return "[ Shortcuts   ](fg:white,bg:black) [ Enter ](fg:black)[ Open ](fg:black,bg:green) " +
 		"[ k ](fg:black)[ Feed Up ](fg:black,bg:green) " +
 		"[ j ](fg:black)[ Feed Down ](fg:black,bg:green) " +
-		"[ Up ](fg:black)[  Source Up ](fg:black,bg:green) " +
-		"[ Down ](fg:black)[ Source Down ](fg:black,bg:green) " +
+		"[ K ](fg:black)[  Source Up ](fg:black,bg:green) " +
+		"[ J ](fg:black)[ Source Down ](fg:black,bg:green) " +
+		"[ l ](fg:black)[ Load Feed ](fg:black,bg:green) " +
 		"[ n ](fg:black)[ Next ](fg:black,bg:green) " +
 		"[ p ](fg:black)[ Prev ](fg:black,bg:green) " +
 		"[ r ](fg:black)[ Refresh ](fg:black,bg:green) " +
